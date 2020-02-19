@@ -68,13 +68,17 @@ RUN set -eux && \
             mysql-client \
             snmp-mibs-downloader \
             ca-certificates \
+            python-minimal \
+            python-pip \
+            python-setuptools \
             unixodbc && \
+    pip2 --no-cache-dir install PySocks==1.6.8 requests==2.20.0 requests-oauthlib==0.6.2 && \
     apt-get ${APT_FLAGS_COMMON} autoremove && \
     apt-get ${APT_FLAGS_COMMON} clean && \
     rm -rf /var/lib/apt/lists/*
 
-ARG MAJOR_VERSION=4.2
-ARG ZBX_VERSION=${MAJOR_VERSION}.4
+ARG MAJOR_VERSION=4.0
+ARG ZBX_VERSION=${MAJOR_VERSION}.10
 ARG ZBX_SOURCES=https://git.zabbix.com/scm/zbx/zabbix.git
 ENV ZBX_VERSION=${ZBX_VERSION} ZBX_SOURCES=${ZBX_SOURCES}
 
@@ -176,7 +180,7 @@ WORKDIR /var/lib/zabbix
 
 VOLUME ["/usr/lib/zabbix/alertscripts", "/usr/lib/zabbix/externalscripts", "/var/lib/zabbix/enc", "/var/lib/zabbix/mibs", "/var/lib/zabbix/modules"]
 VOLUME ["/var/lib/zabbix/snmptraps", "/var/lib/zabbix/ssh_keys", "/var/lib/zabbix/ssl/certs", "/var/lib/zabbix/ssl/keys", "/var/lib/zabbix/ssl/ssl_ca"]
-      
+
 COPY ["docker-entrypoint.sh", "/usr/bin/"]
 
 ENTRYPOINT ["/sbin/tini", "--", "/usr/bin/docker-entrypoint.sh"]
